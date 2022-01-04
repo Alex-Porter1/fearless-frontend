@@ -1,0 +1,94 @@
+version: "3.7"
+services:
+  monolith:
+    build:
+      context: ./monolith
+      dockerfile: ./Dockerfile.dev
+    environment:
+      DATABASE_URL: "postgres://monolith:password@database:5432/monolith"
+      WAIT_HOSTS: database:5432, rabbitmq:5672
+      WAIT_TIMEOUT: 180
+      PEXELS_API_KEY: ${PEXELS_API_KEY}
+      OPEN_WEATHER_API_KEY: ${OPEN_WEATHER_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./monolith:/app
+    depends_on:
+      - rabbitmq
+      - database
+  attendees_microservice:
+    build:
+      context: ./attendees_microservice
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./attendees_microservice:/app
+    depends_on:
+      - rabbitmq
+      - database
+    environment:
+      DATABASE_URL: "postgres://attendees:password@database:5432/attendees"
+      WAIT_HOSTS: database:5432, rabbitmq:5672
+      WAIT_TIMEOUT: 180
+  attendees_conference_info:
+    build:
+      context: ./attendees_microservice
+      dockerfile: ./Dockerfile.conference_info.dev
+    volumes:
+      - ./attendees_microservice:/app
+    depends_on:
+      - monolith
+    environment:
+      DATABASE_URL: "postgres://attendees:password@database:5432/attendees"
+  attendees_account_info:
+    build:
+      context: ./attendees_microservice
+      dockerfile: ./Dockerfile.account_info.dev
+    volumes:
+      - ./attendees_microservice:/app
+    depends_on:
+      - rabbitmq
+      - database
+    environment:
+      DATABASE_URL: "postgres://attendees:password@database:5432/attendees"
+      WAIT_HOSTS: database:5432, rabbitmq:5672
+      WAIT_TIMEOUT: 180
+  presentation_workflow:
+    build:
+      context: ./presentation_workflow
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - rabbitmq
+      - mail
+    volumes:
+      - ./presentation_workflow:/app
+  rabbitmq:
+    image: rabbitmq:3
+  mail:
+    image: mailhog/mailhog
+    environment:
+      - MH_SMTP_BIND_ADDR=0.0.0.0:25
+      - MH_STORAGE=maildir
+      - MH_MAILDIR_PATH=/maildir
+    ports:
+      - "8025:8025"
+    volumes:
+      - ./maildir:/maildir
+  web:
+    image: nginx
+    volumes:
+      - ./ghi:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"
+  database:
+    image: postgres
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+      - ./database/setup:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=monolith,attendees
+      - POSTGRES_PASSWORD=test-databases
+    ports:
+      - 15432:5432
