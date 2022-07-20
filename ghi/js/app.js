@@ -1,17 +1,28 @@
 function createCard(title, name, description, pictureUrl, newStartDate, newEndDate) {
     return `
-    <div class="col">
-      <div class="card shadow p-3 mb-5 bg-white rounded">
-            <img src="${pictureUrl}" class="card-img-top">
-            <div class="card-body">
-            <h2 class="card-title">${title}</h2>
-            <h5 class="card-subtitle mb-2 text-muted">${name}</h5>
-            <p class="card-text fs-5">${description}</p>
-            <div class="card-footer text-muted fs-5">${newStartDate} - ${newEndDate}</div>
+    <div class="container-fluid">
+        <div class="card-columns">
+            <div class="card shadow p-3 mb-5 bg-white rounded">
+                <img src="${pictureUrl}" class="card-img-top">
+                <div class="card-body">
+                <h2 class="card-title">${title}</h2>
+                <h5 class="card-subtitle mb-2 text-muted">${name}</h5>
+                <p class="card-text fs-5">${description}</p>
+                <div class="card-footer text-muted fs-5">${newStartDate} - ${newEndDate}</div>
+                </div>
             </div>
         </div>
     </div>
     `;
+}
+
+
+function makeAlert(message, type) {
+    let alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+    let wrapper = document.createElement('div')
+    wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+
+    alertPlaceholder.append(wrapper)
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -22,10 +33,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(url);
     
         if (!response.ok) {
-          // Figure out what to do when the response is bad
+            makeAlert("We're sorry, you've got errors!", 'danger');
         } else {
           const data = await response.json();
-    
           for (let conference of data.conferences) {
             const detailUrl = `http://localhost:8000${conference.href}`;
             const detailResponse = await fetch(detailUrl);
