@@ -12,6 +12,7 @@ class LocationListEncoder(ModelEncoder):
     properties = [
         "name",
         "picture_url",
+        "id",
     ]
 
 
@@ -24,6 +25,7 @@ class LocationDetailEncoder(ModelEncoder):
         "created",
         "updated",
         "picture_url",
+        "id",
     ]
 
     def get_extra_data(self, o):
@@ -231,3 +233,17 @@ def api_show_location(request, pk):
             encoder=LocationDetailEncoder,
             safe=False,
         )
+
+
+@require_http_methods(["GET"])
+def api_list_states(request):
+
+    if request.method == "GET":
+        states = State.objects.order_by('name')
+        state_list = []
+
+        for state in states:
+            state_dict = {"name": state.name, "abbreviation": state.abbreviation}
+            state_list.append(state_dict)
+        
+        return JsonResponse({"states": state_list})
