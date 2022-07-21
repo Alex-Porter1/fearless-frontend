@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const formTag = document.getElementById('create-conference-form');
             formTag.addEventListener('submit', async event => {
             event.preventDefault();
-        
+   
             const formData = new FormData(formTag);
             const json = JSON.stringify(Object.fromEntries(formData));
                 const conferenceUrl = 'http://localhost:8000/api/conferences/';
@@ -33,6 +33,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const response = await fetch(conferenceUrl, fetchConfig);
                 if (response.ok) {
                     formTag.reset();
+                    formTag.classList.remove("d-none");
                     const newConference = await response.json();
                     console.log(newConference);
                 }
