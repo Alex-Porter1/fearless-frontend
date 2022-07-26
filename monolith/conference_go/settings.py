@@ -62,13 +62,21 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-DJWTO_MODE = "TWO-COOKIES"
-DJWTO_ACCESS_TOKEN_LIFETIME = None
-CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
-CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3001",
 ]
+
+
+
+DJWTO_MODE = "TWO-COOKIES"
+DJWTO_ACCESS_TOKEN_LIFETIME = None
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
+CORS_ALLOW_CREDENTIALS = True
+
 
 ROOT_URLCONF = "conference_go.urls"
 

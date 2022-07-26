@@ -93,3 +93,16 @@ services:
       - POSTGRES_PASSWORD=test-databases
     ports:
       - 15432:5432
+  react:
+    image: node:latest
+    command: npm start
+    working_dir: /app
+    volumes:
+      - ./ghi/app:/app
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3001
+      - NODE_ENV=development
+    ports:
+      - "3001:3001"
+    

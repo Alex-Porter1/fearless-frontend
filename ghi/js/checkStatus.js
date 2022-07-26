@@ -24,8 +24,8 @@ if (payloadCookie) {
     locationTag.classList.remove('d-none');
  }
  if(payload.user.perms.includes("presentations.add_presentation")){
-    const locationTag = document.getElementById('presentationId');
-    locationTag.classList.remove('d-none');
+    const presentationTag = document.getElementById('presentationId');
+    presentationTag.classList.remove('d-none');
  }
 
   // Check if "events.add_location" is in the permissions.

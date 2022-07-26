@@ -4,8 +4,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(url);
         if (response.ok){
             const data = await response.json();
-            const selectTag = document.getElementById('conference');
-
+            const selectTag = document.getElementById('conference'); 
+            
             for (let conference of data.conferences){
                 let option = document.createElement("option");
                 option.value = conference.href;
@@ -19,7 +19,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             const formData = new FormData(formTag);
             const json = JSON.stringify(Object.fromEntries(formData));
+                const practiceID = selectTag.options[selectTag.selectedIndex];
+                console.log("PRACTICEID:", practiceID);
                 const conferenceId = selectTag.options[selectTag.selectedIndex].value;
+                console.log(typeof(conferenceId))
+                console.log("CONFERENCEID", conferenceId);
                 const conferenceUrl = `http://localhost:8000${conferenceId}presentations/`;
                 const fetchConfig = {
                     method: "post",
